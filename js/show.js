@@ -1,8 +1,8 @@
-import { getShowById, getEpisodesByShowId, getShowsByQuery } from './api.js';
+import { getShowById, getEpisodesByShowId } from './api.js';
 
 const params = new URLSearchParams(location.search);
-const rawId = params.get('id');
-const id = rawId && Number.isInteger(Number(rawId)) && Number(rawId) > 0 ? Number(rawId) : null;
+const id = params.get('id');
+const type = params.get('type') || "movie"; // "movie" o "tv"
 const tParam = params.get('t');
 
 const titleEl = document.querySelector('#show-title');
@@ -13,77 +13,43 @@ const siteEl = document.querySelector('#show-site');
 const episodesStatusEl = document.querySelector('#episodes-status');
 const episodesListEl = document.querySelector('#episodes-list');
 
-// --- OMDb fallback ---
-async function getShowFromOMDb(title) {
-  const apiKey = "TU_API_KEY"; // pon tu API key de omdbapi.com
-  if (!apiKey || !title) return null;
-  const url = `https://www.omdbapi.com/?t=${encodeURIComponent(title)}&apikey=${apiKey}`;
-  const res = await fetch(url);
-  const data = await res.json();
-  return data.Response === "True" ? data : null;
-}
-
 function renderShow(data) {
-  const name = data.name || data.Title || "Título no disponible";
+  const name = data.title || data.name || "Título no disponible";
   titleEl.textContent = name;
 
-  const imgUrl = data.image?.medium || data.image?.original || data.Poster;
-  imageEl.innerHTML =
-    imgUrl && imgUrl !== "N/A"
-      ? `<img src="${imgUrl}" alt="${name}" class="show-poster" />`
-      : `<div class="no-image">Sin imagen</div>`;
+  const imgUrl = data.poster_path 
+    ? `https://image.tmdb.org/t/p/w500${data.poster_path}` 
+    : null;
+  imageEl.innerHTML = imgUrl
+    ? `<img src="${imgUrl}" alt="${name}" class="show-poster" />`
+    : `<div class="no-image">Sin imagen</div>`;
 
-  genresEl.textContent = (Array.isArray(data.genres) && data.genres.length)
-    ? data.genres.join(" · ")
-    : data.Genre || "Sin géneros";
+  genresEl.textContent = data.genres?.map(g => g.name).join(" · ") || "Sin géneros";
+  summaryEl.innerHTML = data.overview || "Sin descripción disponible";
 
-  summaryEl.innerHTML = data.summary || data.Plot || "Sin descripción disponible";
-
-  if (data.officialSite) {
-    siteEl.href = data.officialSite;
+  if (data.homepage) {
+    siteEl.href = data.homepage;
     siteEl.hidden = false;
   } else {
     siteEl.hidden = true;
   }
 }
 
-async function searchByTitle(q) {
-  const results = await getShowsByQuery(q);
-  if (!results?.length) throw new Error("Sin resultados para el título");
-  const exact = results.find(r => r.show?.name?.trim().toLowerCase() === q.trim().toLowerCase());
-  return (exact ? exact.show : results[0].show);
-}
-
 async function loadShow() {
   try {
-    // 1) Si hay ID válido, usamos TVMaze por ID
     if (id) {
-      const tv = await getShowById(id);
-      renderShow(tv);
-      return tv.id; // para episodios
+      const data = await getShowById(id, type);
+      renderShow(data);
+      return type === "tv" ? data.id : null; // episodios solo para series
     }
 
-    // 2) Sin ID → buscamos por título en TVMaze
     if (tParam) {
-      try {
-        const tvByTitle = await searchByTitle(tParam);
-        renderShow(tvByTitle);
-        return tvByTitle.id; // episodios si es serie
-      } catch {
-        // 3) Fallback a OMDb si TVMaze no encuentra
-        const omdb = await getShowFromOMDb(tParam);
-        if (omdb) {
-          renderShow(omdb);
-          return null; // OMDb no tiene episodios de TVMaze
-        }
-        // 4) Nada encontrado
-        titleEl.textContent = "No se encontró el show.";
-        imageEl.innerHTML = `<div class="no-image">Sin imagen</div>`;
-        return null;
-      }
+      // fallback: buscar por título si no hay id
+      const data = await getShowById(tParam, "movie");
+      renderShow(data);
+      return null;
     }
 
-    // 5) Sin ID ni título
     titleEl.textContent = "No se especificó un show.";
     imageEl.innerHTML = `<div class="no-image">Sin imagen</div>`;
     return null;
@@ -106,7 +72,7 @@ async function loadEpisodes(showId) {
   episodesListEl.innerHTML = "";
 
   try {
-    const eps = await getEpisodesByShowId(showId);
+    const eps = await getEpisodesByShowId(showId, 1); // temporada 1 por defecto
     episodesStatusEl.textContent = "";
 
     if (!Array.isArray(eps) || !eps.length) {
@@ -116,8 +82,8 @@ async function loadEpisodes(showId) {
 
     episodesListEl.innerHTML = eps.map(ep => `
       <li>
-        <strong>T${ep.season} · E${ep.number}:</strong> ${ep.name}
-        ${ep.airdate ? `<span class="muted"> (${ep.airdate})</span>` : ""}
+        <strong>T${ep.season_number} · E${ep.episode_number}:</strong> ${ep.name}
+        ${ep.air_date ? `<span class="muted"> (${ep.air_date})</span>` : ""}
       </li>
     `).join("");
   } catch (err) {

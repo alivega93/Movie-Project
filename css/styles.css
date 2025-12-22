@@ -156,96 +156,179 @@ a {
   right: 0;
 }
 
-.btn {
-  background-color: #00a8e1;
-  color: #fff;
-  border: none;
-  border-radius: 4px;
-  padding: 8px 16px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background 0.2s ease, transform 0.2s ease;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-.btn:hover {
-  background-color: rgb(10.8, 193.136, 255);
-  transform: scale(1.05);
-}
-.btn:active {
-  transform: scale(0.95);
+.show-hero {
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  gap: 16px;
+  align-items: start;
+  margin-bottom: 24px;
 }
 
-.card {
-  width: 180px;
-  flex-shrink: 0;
-  text-align: center;
-  margin-bottom: 1rem;
-}
-.card img {
+.show-cover .show-poster,
+.show-cover .no-image {
   width: 100%;
-  height: 250px;
-  -o-object-fit: cover;
-     object-fit: cover;
-  border-radius: 6px;
-  margin-bottom: 0.5rem;
-  display: block;
-}
-.card h3 {
-  font-size: 0.9rem;
-  margin: 0.25rem 0;
-  color: #222;
-}
-.card p {
-  font-size: 0.85rem;
-  color: #666;
-}
-
-.no-image {
-  width: 180px;
-  height: 250px;
-  background: #ffffff;
-  color: #666;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 6px;
-  font-size: 0.9rem;
-  font-style: italic;
-  text-align: center;
-}
-
-.status {
-  color: #666;
-  font-style: italic;
-}
-
-.error {
-  color: #e50914;
-  font-weight: 600;
-}
-
-.grid {
-  display: flex;
-  gap: 12px;
-  overflow-x: auto;
-  padding-bottom: 12px;
-}
-.grid::-webkit-scrollbar {
-  height: 6px;
-}
-.grid::-webkit-scrollbar-thumb {
-  background: #666;
-  border-radius: 3px;
-}
-
-.show-cover img {
   max-width: 300px;
-  width: 100%;
-  height: auto;
+  height: 450px;
   -o-object-fit: cover;
      object-fit: cover;
   border-radius: 6px;
   display: block;
   margin: 0 auto;
+}
+.show-cover .no-image {
+  background: #ffffff;
+  color: #666;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-style: italic;
+  text-align: center;
+}
+
+.show-meta h2 {
+  margin-top: 0;
+  font-size: 1.6rem;
+  color: #222;
+}
+.show-meta .muted {
+  color: #666;
+  font-size: 0.9rem;
+  margin-bottom: 0.5rem;
+}
+.show-meta p {
+  margin-bottom: 1rem;
+  line-height: 1.4;
+}
+
+.episodes-section {
+  margin-top: 24px;
+}
+.episodes-section h3 {
+  font-size: 1.3rem;
+  margin-bottom: 12px;
+  color: #141414;
+}
+.episodes-section .episodes-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.episodes-section .episodes-list li {
+  padding: 8px 0;
+  border-bottom: 1px solid white;
+  font-size: 0.95rem;
+}
+.episodes-section .episodes-list li strong {
+  color: #00a8e1;
+}
+.episodes-section .episodes-list li .muted {
+  color: #666;
+  font-size: 0.85rem;
+}
+
+.show-hero {
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  gap: 16px;
+  align-items: start;
+}
+
+.show-cover .show-poster,
+.show-cover .no-image {
+  width: 100%;
+  max-width: 300px;
+  height: 450px;
+  -o-object-fit: cover;
+     object-fit: cover;
+  border-radius: 6px;
+  display: block;
+  margin: 0 auto;
+}
+.show-cover .no-image {
+  background: #ffffff;
+  color: #666;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-style: italic;
+  text-align: center;
+}
+
+.show-meta h2 {
+  margin-top: 0;
+  font-size: 1.5rem;
+  color: #222;
+}
+.show-meta .muted {
+  color: #666;
+  font-size: 0.9rem;
+  margin-bottom: 0.5rem;
+}
+.show-meta p {
+  margin-bottom: 1rem;
+  line-height: 1.4;
+}
+
+@media (max-width: 600px) {
+  .site-header .nav-container {
+    flex-direction: column;
+    gap: 8px;
+  }
+  .nav {
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+  }
+  .show-hero {
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+  .show-meta h2 {
+    font-size: 1.3rem;
+  }
+  .show-meta p {
+    font-size: 0.9rem;
+  }
+  .episodes-section h3 {
+    font-size: 1.1rem;
+    text-align: center;
+  }
+  .episodes-list li {
+    font-size: 0.85rem;
+  }
+}
+@media (max-width: 900px) {
+  .site-main {
+    padding: 16px 8px;
+    margin-top: 100px;
+  }
+  .show-hero {
+    grid-template-columns: 200px 1fr;
+    gap: 12px;
+  }
+  .show-cover .show-poster,
+  .show-cover .no-image {
+    max-width: 200px;
+    height: 300px;
+  }
+  .show-meta h2 {
+    font-size: 1.4rem;
+  }
+}
+@media (max-width: 1200px) {
+  .container {
+    max-width: 1000px;
+  }
+  .carousel h2,
+  .recommendations h2 {
+    font-size: 1.2rem;
+  }
+}
+@media (min-width: 1440px) {
+  .container {
+    max-width: 1400px;
+  }
+  .show-meta h2 {
+    font-size: 1.8rem;
+  }
 }/*# sourceMappingURL=styles.css.map */

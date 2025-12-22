@@ -1,23 +1,37 @@
-// TVMaze API
+import axios from "axios";
+
+const API_URL = "https://api.themoviedb.org/3";
+const TOKEN = "TU_TOKEN_DE_TMDB"; // reemplaza con tu token
+
 const api = axios.create({
-  baseURL: 'https://api.tvmaze.com',
-  timeout: 8000
+  baseURL: API_URL,
+  headers: {
+    Authorization: `Bearer ${TOKEN}`,
+    accept: "application/json"
+  },
+  params: { language: "es-ES" }
 });
 
-// Buscar shows por texto
+// Buscar (películas, series, personas)
 export async function getShowsByQuery(query) {
-  const { data } = await api.get(`/search/shows?q=${encodeURIComponent(query)}`);
-  return data; // [{ score, show }]
+  const { data } = await api.get("/search/multi", { params: { query } });
+  return data.results;
 }
 
-// Obtener detalles por ID
-export async function getShowById(id) {
-  const { data } = await api.get(`/shows/${id}`);
+// Detalle de película o serie
+export async function getShowById(id, type = "movie") {
+  const { data } = await api.get(`/${type}/${id}`);
   return data;
 }
 
-// Obtener episodios por show
-export async function getEpisodesByShowId(id) {
-  const { data } = await api.get(`/shows/${id}/episodes`);
-  return data;
+// Episodios de temporada (solo series)
+export async function getEpisodesByShowId(tvId, season = 1) {
+  const { data } = await api.get(`/tv/${tvId}/season/${season}`);
+  return data.episodes;
+}
+
+// Tendencias del día (opcional para home)
+export async function getTrendingDay() {
+  const { data } = await api.get("/trending/all/day");
+  return data.results;
 }
