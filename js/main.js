@@ -1,152 +1,364 @@
-import { getShowsByQuery, getShowById } from './api.js';
-
-const statusEl = document.querySelector('#status');
-const resultsEl = document.querySelector('#results');
-const topMoviesEl = document.querySelector('#top-movies');
-const topSeriesEl = document.querySelector('#top-series');
-const recommendationsEl = document.querySelector('#recommendations');
-const searchSection = document.querySelector('.search-section');
-
-function renderCards(container, items) {
-  container.innerHTML = items.map(item => {
-    const title = item.title || item.name || "Sin título";
-    const id = item.id;
-    const type = item.media_type || (item.first_air_date ? "tv" : "movie");
-    const imgUrl = item.poster_path 
-      ? `https://image.tmdb.org/t/p/w500${item.poster_path}` 
-      : "assets/img/fallback.jpg";
-    const t = encodeURIComponent(title);
-
-    return `
-      <a href="show.html?id=${id}&type=${type}&t=${t}" class="card" title="${title}">
-        <img src="${imgUrl}" alt="${title}">
-        <h3>${title}</h3>
-      </a>
-    `;
-  }).join('');
-}
-
-// --- Arrays locales (manteniendo tu catálogo) ---
-const topMovies = [
-  { title: "Harry Potter", poster_path: "/wuMc08IPKEatf9rnMNXvIDxqP4W.jpg", id: 671, media_type: "movie" },
-  { title: "Avatar", poster_path: "/kyeqWdyUXW608qlYkRqosgbbJyK.jpg", id: 19995, media_type: "movie" },
-  { title: "Inception", poster_path: "/9gk7adHYeDvHkCSEqAvQNLV5Uge.jpg", id: 27205, media_type: "movie" },
-  { title: "The Invisible Man", poster_path: "/uZMZyvarQuXLRqf3xdpdMqzdtjb.jpg", id: 570670, media_type: "movie" },
-  { title: "Annabelle Creation", poster_path: "/tb86j8jVCVsdZnzf8I6cIi65Nl.jpg", id: 396422, media_type: "movie" },
-  { title: "Burlesque", poster_path: "/lXzYdM2rYzWxZmf0RduCMsZ0zQF.jpg", id: 39427, media_type: "movie" },
-  { title: "To All The Boys I've Loved Before", poster_path: "/hKHZhUbIyUAjcSrqJThFGYIR6kI.jpg", id: 466282, media_type: "movie" },
-  { title: "Anyone But You", poster_path: "/yRt7MGBSdpQkdcbYlX7HXqY0Y6Z.jpg", id: 1072790, media_type: "movie" },
-  { title: "Safe Haven", poster_path: "/j6vZrj3ZzY0f7vJk9g6r5z7kC3F.jpg", id: 109431, media_type: "movie" },
-  { title: "Bridge to Terabithia", poster_path: "/vOipe2myV5KH5xVmxXx9Yv5fFWM.jpg", id: 1267, media_type: "movie" },
-  { title: "The Parent Trap", poster_path: "/sXkJ9xZq9VHtV6nRvWmvMRGsiE9.jpg", id: 10948, media_type: "movie" },
-  { title: "How To Train Your Dragon", poster_path: "/o7dcZfFzFvYyqS2rYjZg0ZpQfM.jpg", id: 10191, media_type: "movie" },
-  { title: "Despicable Me", poster_path: "/s7tUQ0nU6pFZzQ0jrISFRCGDpa2.jpg", id: 20352, media_type: "movie" },
-  { title: "Lilo & Stitch", poster_path: "/zY5xZQ2E1VlzDqgW8sELpAo7P5u.jpg", id: 11544, media_type: "movie" }
+import { getShowsByQuery, getTrendingDay } from "./api.js";
+const sections = [
+  ".hero",
+  ".movies-section",
+  ".series-section",
+  ".recommendations-section",
+  ".sports-section",
+  ".tv-section",
+  ".search-section",
+  ".search-results",
 ];
 
-const topSeries = [
-  { id: 46733, name: "Sweet Tooth", poster_path: "/uJ0J0qQQuIIR2Y3r1YjDqf1XlSH.jpg", media_type: "tv" },
-  { id: 58151, name: "¿Quién Mató A Sara?", poster_path: "/qJxzjUjCpTPvDHldNnlbRC4OqEh.jpg", media_type: "tv" },
-  { id: 36732, name: "911 Lone Star", poster_path: "/j5y9p8vZpYfZcFz6P7k6A9kZZg6.jpg", media_type: "tv" },
-  { id: 60336, name: "The Diplomat", poster_path: "/aZqK7lidhMlNROvQzQ9h9t7VDaR.jpg", media_type: "tv" },
-  { id: 60337, name: "The Lincoln Lawyer", poster_path: "/vZpQfM9vDOMkMt2rt7NmBGG99nm.jpg", media_type: "tv" },
-  { id: 365, name: "JAG", poster_path: "/dZQzQpimeISFRCGDpa2.jpg", media_type: "tv" },
-  { id: 3650, name: "Ghost Whisperer", poster_path: "/nZpQfM9vDOMkMt2rt7NmBGG99nm.jpg", media_type: "tv" },
-  { id: 677, name: "Charmed", poster_path: "/o7dcZfFzFvYyqS2rYjZg0ZpQfM.jpg", media_type: "tv" },
-  { id: 36710, name: "Shadowhunters", poster_path: "/s7tUQ0nU6pFZzQ0jrISFRCGDpa2.jpg", media_type: "tv" },
-  { id: 49813, name: "Fate The Winx Saga", poster_path: "/zY5xZQ2E1VlzDqgW8sELpAo7P5u.jpg", media_type: "tv" },
-  { id: 49814, name: "Emily in Paris", poster_path: "/uJ0J0qQQuIIR2Y3r1YjDqf1XlSH.jpg", media_type: "tv" },
-  { id: 49815, name: "Virgin River", poster_path: "/qJxzjUjCpTPvDHldNnlbRC4OqEh.jpg", media_type: "tv" },
-  { id: 49816, name: "The Good Witch", poster_path: "/j5y9p8vZpYfZcFz6P7k6A9kZZg6.jpg", media_type: "tv" },
-  { id: 49817, name: "Life In Color With David Attenborough", poster_path: "/aZqK7lidhMlNROvQzQ9h9t7VDaR.jpg", media_type: "tv" },
-  { id: 49818, name: "The Haunting Of Hill House", poster_path: "/vZpQfM9vDOMkMt2rt7NmBGG99nm.jpg", media_type: "tv" }
-];
-
-const recommendations = [
-  { title: "Wonka", poster_path: "/qJxzjUjCpTPvDHldNnlbRC4OqEh.jpg", id: 787699, media_type: "movie" },
-  { title: "Dune: Part Two", poster_path: "/uJ0J0qQQuIIR2Y3r1YjDqf1XlSH.jpg", id: 693134, media_type: "movie" },
-  { title: "Oppenheimer", poster_path: "/s7tUQ0nU6pFZzQ0jrISFRCGDpa2.jpg", id: 872585, media_type: "movie" },
-  { title: "Holiday", poster_path: "/zY5xZQ2E1VlzDqgW8sELpAo7P5u.jpg", id: 109431, media_type: "movie" },
-  { title: "Klaus", poster_path: "/o7dcZfFzFvYyqS2rYjZg0ZpQfM.jpg", id: 508965, media_type: "movie" }
-];
-
-// --- Inicio ---
-function loadInitialSections() {
-  renderCards(topMoviesEl, topMovies);
-  renderCards(topSeriesEl, topSeries);
-  renderCards(recommendationsEl, recommendations);
-  resultsEl.innerHTML = '';
-  statusEl.textContent = '';
-
-  topMoviesEl.closest('section').style.display = "block";
-  topSeriesEl.closest('section').style.display = "block";
-  recommendationsEl.closest('section').style.display = "block";
-  searchSection.style.display = "none";
-}
-
-// --- Buscar ---
-document.querySelector('#nav-search')?.addEventListener('click', async (e) => {
-  e.preventDefault();
-  const q = prompt('Buscar (película, serie, deporte)…');
-  if (!q) return;
-  statusEl.textContent = `Buscando “${q}”…`;
-
-  try {
-    const data = await getShowsByQuery(q);
-    topMoviesEl.closest('section').style.display = "none";
-    topSeriesEl.closest('section').style.display = "none";
-    recommendationsEl.closest('section').style.display = "none";
-    searchSection.style.display = "block";
-    searchSection.querySelector('h2').textContent = "Resultados";
-
-    resultsEl.innerHTML = '';
-    renderCards(resultsEl, data.slice(0, 12));
-    statusEl.textContent = '';
-  } catch (err) {
-    console.error(err);
-    statusEl.textContent = 'Error en la búsqueda.';
-  }
-});
-
-// --- Navegación categorías ---
-function showCategory(title, query) {
-  topMoviesEl.closest('section').style.display = "none";
-  topSeriesEl.closest('section').style.display = "none";
-  recommendationsEl.closest('section').style.display = "none";
-  searchSection.style.display = "block";
-  searchSection.querySelector('h2').textContent = title;
-
-  statusEl.textContent = `Cargando ${title.toLowerCase()}…`;
-  getShowsByQuery(query).then(data => {
-    resultsEl.innerHTML = '';
-    renderCards(resultsEl, data.slice(0, 12));
-    statusEl.textContent = '';
-  }).catch(err => {
-    console.error(err);
-    statusEl.textContent = 'Error al cargar resultados.';
+function hideAllSections() {
+  sections.forEach((sel) => {
+    const el = document.querySelector(sel);
+    if (el) el.style.display = "none";
   });
 }
 
-document.querySelector('#nav-home')?.addEventListener('click', (e) => {
-  e.preventDefault();
-  loadInitialSections();
-});
-document.querySelector('#nav-movies')?.addEventListener('click', (e) => {
-  e.preventDefault();
-  showCategory("Películas", "movie");
-});
-document.querySelector('#nav-series')?.addEventListener('click', (e) => {
-  e.preventDefault();
-  showCategory("Series TV", "tv");
-});
-document.querySelector('#nav-sports')?.addEventListener('click', (e) => {
-  e.preventDefault();
-  showCategory("Deportes", "sport");
-});
-document.querySelector('#nav-live')?.addEventListener('click', (e) => {
-  e.preventDefault();
-  showCategory("TV en directo", "news");
-});
+function setActiveNav(sectionKey) {
+  document.querySelectorAll(".nav a[data-section]").forEach((a) => {
+    a.classList.toggle("active", a.dataset.section === sectionKey);
+  });
+}
 
-// --- Inicial ---
-loadInitialSections();
+function getPoster(item) {
+  if (item.poster_path) {
+    if (item.poster_path.startsWith("http")) return item.poster_path;
+    return `https://image.tmdb.org/t/p/w300${item.poster_path}`;
+  }
+  if (item.imageUrl) return item.imageUrl;
+  return null;
+}
+function renderCards(container, items, options = {}) {
+  const { clickable = false, byTitleOnly = false } = options;
+
+  container.innerHTML = "";
+
+  if (!items || items.length === 0) {
+    container.innerHTML = `<p class="empty-state">No se encontraron resultados.</p>`;
+    return;
+  }
+
+  items.forEach((item) => {
+    const card = document.createElement("div");
+    card.className = "card";
+    const title = item.title || item.name || "Sin título";
+    const poster = getPoster(item);
+    card.innerHTML = `
+      ${
+        poster
+          ? `<img src="${poster}" alt="${title}">`
+          : `<div class="no-image-card">Sin imagen</div>`
+      }
+      <h3>${title}</h3>
+    `;
+
+    if (clickable) {
+      card.style.cursor = "pointer";
+      card.addEventListener("click", () => {
+        const safeTitle = title.trim();
+        const type = item.media_type || (item.title ? "movie" : "tv");
+
+        if (!byTitleOnly && item.id && (type === "movie" || type === "tv")) {
+          window.location.href = `show.html?id=${item.id}&type=${type}`;
+        } else {
+          window.location.href = `show.html?t=${encodeURIComponent(safeTitle)}`;
+        }
+      });
+    }
+
+    container.appendChild(card);
+  });
+}
+
+function initCarousels() {
+  document.querySelectorAll(".carousel-wrapper").forEach((wrapper) => {
+    const carousel = wrapper.querySelector(".carousel");
+    const prev = wrapper.querySelector(".carousel-btn.prev");
+    const next = wrapper.querySelector(".carousel-btn.next");
+
+    if (!carousel) return;
+
+    const step = () => {
+      const card = carousel.querySelector(".card");
+      return card ? card.offsetWidth + 16 : 180;
+    };
+
+    prev?.addEventListener("click", (e) => {
+      e.preventDefault();
+      carousel.scrollBy({ left: -step(), behavior: "smooth" });
+    });
+
+    next?.addEventListener("click", (e) => {
+      e.preventDefault();
+      carousel.scrollBy({ left: step(), behavior: "smooth" });
+    });
+  });
+}
+
+function initStaticCardsDetailLinks() {
+  const selectors =
+    ".movies-section .card, .series-section .card, .recommendations-section .card";
+
+  document.querySelectorAll(selectors).forEach((card) => {
+    const link = card.querySelector("a");
+    const titleEl = card.querySelector("h3");
+    const tmdbId = card.dataset.tmdbId;
+    const tmdbType = card.dataset.tmdbType;
+
+    if (!link || !titleEl) return;
+
+    link.addEventListener("click", (e) => {
+      e.preventDefault();
+      const title = titleEl.textContent.trim();
+
+      if (tmdbId && tmdbType) {
+        window.location.href = `show.html?id=${tmdbId}&type=${tmdbType}`;
+      } else {
+        window.location.href = `show.html?t=${encodeURIComponent(title)}`;
+      }
+    });
+  });
+}
+
+document.addEventListener("DOMContentLoaded", async () => {
+  const moviesCarousel = document.querySelector(".movies-section .carousel");
+  const seriesCarousel = document.querySelector(".series-section .carousel");
+  const originalMoviesHTML = moviesCarousel?.innerHTML || "";
+  const originalSeriesHTML = seriesCarousel?.innerHTML || "";
+
+  function showHome() {
+    hideAllSections();
+
+    const hero = document.querySelector(".hero");
+    if (hero) hero.style.display = "block";
+
+    const moviesSection = document.querySelector(".movies-section");
+    if (moviesSection && moviesCarousel) {
+      moviesSection.style.display = "block";
+      moviesCarousel.innerHTML = originalMoviesHTML;
+    }
+
+    const seriesSection = document.querySelector(".series-section");
+    if (seriesSection && seriesCarousel) {
+      seriesSection.style.display = "block";
+      seriesCarousel.innerHTML = originalSeriesHTML;
+    }
+
+    const recs = document.querySelector(".recommendations-section");
+    if (recs) recs.style.display = "block";
+
+    initStaticCardsDetailLinks();
+    setActiveNav("hero");
+  }
+
+  async function showMoviesCategory() {
+    hideAllSections();
+    const moviesSection = document.querySelector(".movies-section");
+    if (moviesSection) moviesSection.style.display = "block";
+    setActiveNav("movies");
+
+    if (!moviesCarousel) return;
+
+    try {
+      const trending = await getTrendingDay();
+      const movies = (trending || [])
+        .filter((i) => i.media_type === "movie" || (!i.media_type && i.title))
+        .slice(0, 15);
+
+      renderCards(moviesCarousel, movies, { clickable: true });
+    } catch (err) {
+      console.error(err);
+      moviesCarousel.innerHTML = "<p>Error cargando películas.</p>";
+    }
+  }
+
+  async function showSeriesCategory() {
+    hideAllSections();
+    const seriesSection = document.querySelector(".series-section");
+    if (seriesSection) seriesSection.style.display = "block";
+    setActiveNav("series");
+
+    if (!seriesCarousel) return;
+
+    try {
+      const trending = await getTrendingDay();
+      const series = (trending || [])
+        .filter((i) => i.media_type === "tv" || (!i.media_type && i.name))
+        .slice(0, 15);
+
+      renderCards(seriesCarousel, series, { clickable: true });
+    } catch (err) {
+      console.error(err);
+      seriesCarousel.innerHTML = "<p>Error cargando series.</p>";
+    }
+  }
+
+  async function showSportsSection() {
+    hideAllSections();
+    const section = document.querySelector(".sports-section");
+    if (section) section.style.display = "block";
+    setActiveNav("deportes");
+
+    const container = document.querySelector(".sports-section .carousel");
+    if (!container) return;
+
+    try {
+      const res = await fetch(
+        "https://www.thesportsdb.com/api/v1/json/3/eventspastleague.php?id=4328"
+      );
+      const data = await res.json();
+
+      const items = (data.events || []).slice(0, 12).map((ev) => ({
+        id: ev.idEvent,
+        name: ev.strEvent,
+        imageUrl: ev.strThumb
+          ? ev.strThumb.replace("http://", "https://")
+          : null,
+      }));
+
+      renderCards(container, items, { clickable: true, byTitleOnly: true });
+    } catch (err) {
+      console.error(err);
+      container.innerHTML = "<p>Error cargando deportes.</p>";
+    }
+  }
+
+  async function showTVSection() {
+    hideAllSections();
+    const section = document.querySelector(".tv-section");
+    if (section) section.style.display = "block";
+    setActiveNav("tv");
+
+    const container = document.querySelector(".tv-section .carousel");
+    if (!container) return;
+
+    try {
+      const today = new Date().toISOString().split("T")[0];
+      const res = await fetch(
+        `https://api.tvmaze.com/schedule?country=US&date=${today}`
+      );
+      const data = await res.json();
+
+      const items = (data || []).slice(0, 12).map((item) => ({
+        id: item.show.id,
+        name: item.show.name,
+        imageUrl: item.show.image
+          ? item.show.image.medium.replace("http://", "https://")
+          : null,
+      }));
+
+      renderCards(container, items, { clickable: true, byTitleOnly: true });
+    } catch (err) {
+      console.error(err);
+      container.innerHTML = "<p>Error cargando TV en vivo.</p>";
+    }
+  }
+
+  initCarousels();
+  initStaticCardsDetailLinks();
+
+  const sectionParam = new URLSearchParams(location.search).get("section");
+  if (sectionParam === "movies") {
+    await showMoviesCategory();
+  } else if (sectionParam === "series") {
+    await showSeriesCategory();
+  } else if (sectionParam === "deportes") {
+    await showSportsSection();
+  } else if (sectionParam === "tv") {
+    await showTVSection();
+  } else {
+    showHome();
+  }
+
+  const homeLink = document.querySelector('[data-section="hero"]');
+  if (homeLink) {
+    homeLink.addEventListener("click", (e) => {
+      e.preventDefault();
+      history.replaceState({}, "", "index.html");
+      showHome();
+    });
+  }
+
+  const moviesLink = document.querySelector('[data-section="movies"]');
+  if (moviesLink) {
+    moviesLink.addEventListener("click", (e) => {
+      e.preventDefault();
+      history.replaceState({}, "", "index.html?section=movies");
+      showMoviesCategory();
+    });
+  }
+
+  const seriesLink = document.querySelector('[data-section="series"]');
+  if (seriesLink) {
+    seriesLink.addEventListener("click", (e) => {
+      e.preventDefault();
+      history.replaceState({}, "", "index.html?section=series");
+      showSeriesCategory();
+    });
+  }
+
+  const deportesLink = document.querySelector('[data-section="deportes"]');
+  if (deportesLink) {
+    deportesLink.addEventListener("click", (e) => {
+      e.preventDefault();
+      history.replaceState({}, "", "index.html?section=deportes");
+      showSportsSection();
+    });
+  }
+
+  const tvLink = document.querySelector('[data-section="tv"]');
+  if (tvLink) {
+    tvLink.addEventListener("click", (e) => {
+      e.preventDefault();
+      history.replaceState({}, "", "index.html?section=tv");
+      showTVSection();
+    });
+  }
+
+  const searchNavBtn = document.getElementById("nav-search");
+  if (searchNavBtn) {
+    searchNavBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+      hideAllSections();
+      const searchSection = document.querySelector(".search-section");
+      if (searchSection) searchSection.style.display = "block";
+      const input = document.getElementById("search-input");
+      if (input) input.focus();
+      setActiveNav(null);
+    });
+  }
+
+  const searchForm = document.getElementById("search-form");
+  if (searchForm) {
+    searchForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const input = document.getElementById("search-input");
+      const query = input?.value.trim();
+      if (!query) return;
+
+      const resultsContainer = document.querySelector(
+        ".search-results .carousel"
+      );
+      if (!resultsContainer) return;
+
+      hideAllSections();
+      const searchSection = document.querySelector(".search-section");
+      const resultsSection = document.querySelector(".search-results");
+      if (searchSection) searchSection.style.display = "block";
+      if (resultsSection) resultsSection.style.display = "block";
+
+      try {
+        const results = await getShowsByQuery(query);
+        renderCards(resultsContainer, (results || []).slice(0, 15), {
+          clickable: true,
+        });
+      } catch (err) {
+        console.error(err);
+        resultsContainer.innerHTML = "<p>Error en la búsqueda.</p>";
+      }
+    });
+  }
+});

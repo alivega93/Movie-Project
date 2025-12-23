@@ -1,0 +1,215 @@
+@use 'variables' as *;
+@use 'mixins' as *;
+
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: $color-sidebar;
+  box-shadow: $shadow-base;
+  text-align: center;
+}
+
+.logo {
+  margin: $space-3 0;
+  font-weight: 800;
+  font-size: 1.5rem;
+  color: $color-brand;
+}
+
+.nav-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: $space-4;
+  padding: $space-3;
+  position: relative;
+
+  @include respond(sm) {
+    flex-direction: column;
+    gap: $space-2;
+  }
+}
+
+.nav {
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: $space-3;
+  margin: 0;
+  padding: 0;
+
+  li {
+    position: relative;
+
+    a {
+      display: inline-block;
+      padding: $space-2 $space-3;
+      border-radius: $radius-base;
+      color: #fff;
+      font-weight: 500;
+      transition: background .2s ease, color .2s ease;
+      cursor: pointer;
+
+      &:hover {
+        color: $color-brand;
+      }
+
+      &.active {
+        color: $color-brand;
+        font-weight: 600;
+      }
+    }
+
+    .submenu,
+    .submenu-grid,
+    .cuenta-menu {
+      display: none;
+      position: absolute;
+      background: $color-panel;
+      border: 1px solid $color-muted;
+      box-shadow: $shadow-base;
+      top: 100%;
+      left: 0;
+      padding: $space-2;
+      min-width: 180px;
+      z-index: 200;
+
+      li a {
+        color: $color-text;
+        display: block;
+        padding: $space-2;
+
+        &:hover {
+          color: $color-brand;
+        }
+      }
+    }
+
+    &:hover>.submenu,
+    &:hover>.submenu-grid,
+    &:hover>.cuenta-menu {
+      display: block;
+    }
+
+    &.open>.submenu,
+    &.open>.submenu-grid,
+    &.open>.cuenta-menu {
+      display: block;
+    }
+
+    .submenu-grid {
+      padding: $space-3;
+      gap: $space-4;
+    }
+
+    &:hover>.submenu-grid,
+    &.open>.submenu-grid {
+      display: flex;
+    }
+
+    .submenu-column {
+      h4 {
+        margin: 0 0 $space-2;
+        font-size: 1rem;
+        font-weight: 700;
+        color: $color-brand;
+      }
+
+      ul {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+
+        li a {
+          color: $color-text;
+          display: block;
+          padding: $space-1 0;
+
+          &:hover {
+            color: $color-brand;
+          }
+        }
+      }
+    }
+  }
+}
+
+.btn-subscribe {
+  @include btn($color-brand, $color-panel);
+  font-size: 1rem;
+  position: absolute;
+  right: $space-3;
+}
+
+#nav-search {
+  background: transparent;
+  border: none;
+  font: inherit;
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+  color: inherit;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+
+  &:hover {
+    transform: scale(1.1);
+  }
+
+  &:focus-visible {
+    outline: 2px solid $color-brand;
+    outline-offset: 2px;
+  }
+}
+
+#content-area {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: $space-4;
+}
+
+.genre-card {
+  background: $color-panel;
+  border: 1px solid $color-muted;
+  border-radius: $radius-base;
+  padding: $space-3;
+  text-align: center;
+  font-weight: 600;
+  color: $color-text;
+  cursor: pointer;
+  transition: transform .2s ease, box-shadow .2s ease;
+
+  &:hover {
+    color: $color-brand;
+    transform: scale(1.05);
+    box-shadow: $shadow-base;
+  }
+}
+
+.nav #nav-search {
+  display: inline-block;
+  padding: $space-2 $space-3;
+  border-radius: $radius-base;
+
+  background: transparent;
+  border: none;
+
+  color: #fff;
+  font: inherit;
+  font-weight: 500;
+
+  cursor: pointer;
+  transition: background .2s ease, color .2s ease;
+
+  &:hover {
+    color: $color-brand;
+  }
+
+  &:focus {
+    outline: 2px solid $color-brand;
+    outline-offset: 2px;
+  }
+}

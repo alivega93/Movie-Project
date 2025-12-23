@@ -1,0 +1,104 @@
+@use 'variables' as *;
+@use 'mixins' as *;
+
+.show-hero {
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  gap: $space-4;
+  align-items: start;
+
+  @include respond(md) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.show-cover {
+  .show-poster {
+    width: 100%;
+    max-width: 300px;
+    height: $poster-height;
+    object-fit: cover;
+    border-radius: $radius-base;
+    display: block;
+    margin: 0 auto;
+  }
+
+  .no-image {
+    width: 100%;
+    max-width: 300px;
+    height: $poster-height;
+    border-radius: $radius-base;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+
+    background: rgba(255, 255, 255, 0.06);
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 0.9rem;
+    font-style: italic;
+    text-align: center;
+  }
+}
+
+.show-meta {
+  h2 {
+    margin-top: 0;
+    font-size: 1.5rem;
+    color: #fff;
+  }
+
+  .muted {
+    @include text-muted;
+    margin-bottom: 0.5rem;
+    color: lighten($color-muted, 15%);
+  }
+
+  p {
+    margin-bottom: 1rem;
+    line-height: 1.4;
+    color: #fff;
+  }
+
+  @include respond(md) {
+    margin-top: $space-4;
+  }
+
+  .btn {
+    @include btn($color-brand, $color-panel);
+    margin-top: $space-3;
+    display: inline-block;
+  }
+}
+
+.episodes-section {
+  margin-top: $space-5;
+
+  h3 {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: $color-brand;
+    margin-bottom: $space-3;
+  }
+
+  .status {
+    @include text-muted;
+    margin-bottom: $space-2;
+  }
+
+  .episodes-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+
+    li {
+      margin-bottom: $space-2;
+      font-size: 0.95rem;
+      color: #fff;
+
+      .muted {
+        @include text-muted;
+      }
+    }
+  }
+}

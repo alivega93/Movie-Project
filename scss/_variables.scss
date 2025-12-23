@@ -1,9 +1,9 @@
 $color-bg: #f5f5f5;
 $color-text: #222;
 $color-muted: #666;
-$color-brand: #00a8e1; // azul Prime Video
+$color-brand: #00a8e1;
 $color-panel: #ffffff;
-$color-sidebar: #141414;
+$color-sidebar: #0d1b2a;
 $color-sidebar-light: lighten($color-sidebar, 10%);
 
 $font-main: 'Lexend', sans-serif;
@@ -13,6 +13,7 @@ $space-2: 8px;
 $space-3: 12px;
 $space-4: 16px;
 $space-5: 24px;
+$space-6: 32px;
 
 $bp-sm: 600px;
 $bp-md: 900px;
@@ -20,5 +21,8 @@ $bp-lg: 1200px;
 $bp-xl: 1440px;
 
 $poster-height: 450px;
-$shadow-base: 0 4px 16px rgba(0,0,0,0.2);
 $radius-base: 6px;
+
+$shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.15);
+$shadow-base: 0 4px 16px rgba(0, 0, 0, 0.2);
+$shadow-lg: 0 6px 20px rgba(0, 0, 0, 0.3);

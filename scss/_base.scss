@@ -1,0 +1,61 @@
+@use 'variables' as *;
+@use 'mixins' as *;
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+body {
+  background: linear-gradient(180deg, #0f171e 0%, #1a242f 100%);
+  color: $color-text;
+  font-family: $font-main;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+
+  &:hover,
+  &:focus {
+    color: $color-brand;
+    text-decoration: underline;
+  }
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 $space-4;
+}
+
+.muted {
+  @include text-muted;
+}
+
+main {
+  flex: 1;
+}
+
+.site-footer {
+  margin-top: auto;
+  padding: $space-4;
+  text-align: center;
+  font-size: 0.9rem;
+  color: $color-muted;
+  background: $color-sidebar;
+}

@@ -1,37 +1,71 @@
-import axios from "axios";
+const BASE_URL = "/.netlify/functions/tmdb";
 
-const API_URL = "https://api.themoviedb.org/3";
-const TOKEN = "TU_TOKEN_DE_TMDB"; // reemplaza con tu token
+async function callTmdb(endpoint, params = {}) {
+  const url = `${BASE_URL}?endpoint=${encodeURIComponent(
+    endpoint
+  )}&params=${encodeURIComponent(JSON.stringify(params))}`;
 
-const api = axios.create({
-  baseURL: API_URL,
-  headers: {
-    Authorization: `Bearer ${TOKEN}`,
-    accept: "application/json"
-  },
-  params: { language: "es-ES" }
-});
+  const res = await fetch(url);
+  if (!res.ok) {
+    console.error("Error TMDb:", res.status, res.statusText);
+    throw new Error("Error al llamar a TMDb");
+  }
 
-// Buscar (películas, series, personas)
+  return res.json();
+}
 export async function getShowsByQuery(query) {
-  const { data } = await api.get("/search/multi", { params: { query } });
-  return data.results;
+  try {
+    const data = await callTmdb("/search/multi", { query });
+    return data.results || [];
+  } catch (error) {
+    console.error("Error buscando shows:", error);
+    return [];
+  }
 }
-
-// Detalle de película o serie
 export async function getShowById(id, type = "movie") {
-  const { data } = await api.get(`/${type}/${id}`);
-  return data;
+  try {
+    const data = await callTmdb(`/${type}/${id}`, {});
+    return data;
+  } catch (error) {
+    console.error("Error obteniendo show:", error);
+    return null;
+  }
 }
-
-// Episodios de temporada (solo series)
 export async function getEpisodesByShowId(tvId, season = 1) {
-  const { data } = await api.get(`/tv/${tvId}/season/${season}`);
-  return data.episodes;
+  try {
+    const data = await callTmdb(`/tv/${tvId}/season/${season}`, {});
+    return data.episodes || [];
+  } catch (error) {
+    console.error("Error obteniendo episodios:", error);
+    return [];
+  }
+}
+export async function getTrendingDay() {
+  try {
+    const data = await callTmdb("/trending/all/day", {});
+    return data.results || [];
+  } catch (error) {
+    console.error("Error obteniendo trending:", error);
+    return [];
+  }
 }
 
-// Tendencias del día (opcional para home)
-export async function getTrendingDay() {
-  const { data } = await api.get("/trending/all/day");
-  return data.results;
+export async function getTrendingWeek() {
+  try {
+    const data = await callTmdb("/trending/all/week", {});
+    return data.results || [];
+  } catch (error) {
+    console.error("Error obteniendo trending semanal:", error);
+    return [];
+  }
+}
+
+export async function getGenres(type = "movie") {
+  try {
+    const data = await callTmdb(`/genre/${type}/list`, {});
+    return data.genres || [];
+  } catch (error) {
+    console.error("Error obteniendo géneros:", error);
+    return [];
+  }
 }

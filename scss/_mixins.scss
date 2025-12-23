@@ -1,0 +1,90 @@
+@use 'variables' as *;
+
+@mixin button($bg, $color) {
+  background-color: $bg;
+  color: $color;
+  border: none;
+  border-radius: $radius-base;
+  padding: $space-2 $space-4;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.2s ease;
+
+  &:hover {
+    background-color: lighten($bg, 8%);
+    transform: scale(1.05);
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
+}
+
+@mixin btn($bg, $color) {
+  @include button($bg, $color);
+}
+
+@mixin card($radius: $radius-base, $shadow: $shadow-base) {
+  background: $color-panel;
+  border-radius: $radius;
+  overflow: hidden;
+  box-shadow: $shadow;
+  transition: transform 0.3s ease;
+  cursor: pointer;
+
+  img {
+    width: 100%;
+    display: block;
+  }
+
+  &:hover {
+    transform: scale(1.05);
+  }
+}
+
+@mixin text-muted {
+  color: $color-muted;
+  font-size: .9rem;
+}
+
+@mixin shadow {
+  box-shadow: $shadow-base;
+}
+
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@mixin grid($columns, $gap) {
+  display: grid;
+  grid-template-columns: repeat($columns, 1fr);
+  gap: $gap;
+}
+
+@mixin respond($breakpoint) {
+  @if $breakpoint ==sm {
+    @media (max-width: $bp-sm) {
+      @content;
+    }
+  }
+
+  @else if $breakpoint ==md {
+    @media (max-width: $bp-md) {
+      @content;
+    }
+  }
+
+  @else if $breakpoint ==lg {
+    @media (max-width: $bp-lg) {
+      @content;
+    }
+  }
+
+  @else if $breakpoint ==xl {
+    @media (max-width: $bp-xl) {
+      @content;
+    }
+  }
+}

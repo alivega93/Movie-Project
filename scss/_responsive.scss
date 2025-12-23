@@ -1,0 +1,144 @@
+@use 'variables' as *;
+
+@media (max-width: $bp-sm) {
+  .site-header .nav-container {
+    flex-direction: column;
+    gap: $space-2;
+  }
+
+  .nav {
+    flex-direction: column;
+    align-items: center;
+    gap: $space-2;
+  }
+
+  .show-hero {
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+
+  .show-meta {
+    h2 {
+      font-size: 1.3rem;
+    }
+
+    p {
+      font-size: 0.9rem;
+    }
+  }
+
+  .episodes-section h3 {
+    font-size: 1.1rem;
+    text-align: center;
+  }
+
+  .episodes-list li {
+    font-size: 0.85rem;
+  }
+
+  .btn-subscribe {
+    position: static;
+    margin-top: $space-2;
+    width: 100%;
+    text-align: center;
+  }
+
+  .carousel {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: $space-2;
+    overflow-x: unset;
+  }
+
+  .card {
+    width: 100%;
+
+    img {
+      height: 140px;
+      object-fit: cover;
+    }
+
+    h3 {
+      font-size: 0.7rem;
+    }
+  }
+
+  .carousel-btn,
+  .carousel-indicators {
+    display: none;
+  }
+}
+
+@media (max-width: $bp-md) {
+  .site-main {
+    padding: $space-4 $space-2;
+    margin-top: 100px;
+  }
+
+  .show-hero {
+    grid-template-columns: 200px 1fr;
+    gap: $space-3;
+  }
+
+  .show-cover .show-poster,
+  .show-cover .no-image {
+    max-width: 200px;
+    height: 300px;
+  }
+
+  .show-meta h2 {
+    font-size: 1.4rem;
+  }
+
+  .carousel {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: $space-3;
+    overflow-x: unset;
+  }
+
+  .card {
+    width: 100%;
+
+    img {
+      height: 160px;
+    }
+
+    h3 {
+      font-size: 0.75rem;
+    }
+  }
+
+  .carousel-btn,
+  .carousel-indicators {
+    display: none;
+  }
+
+  .btn-subscribe {
+    position: static;
+    margin-top: $space-2;
+    align-self: center;
+  }
+}
+
+@media (max-width: $bp-lg) {
+  .container {
+    max-width: 1000px;
+  }
+
+  .movies-section h2,
+  .series-section h2,
+  .recommendations-section h2 {
+    font-size: 1.2rem;
+  }
+}
+
+@media (min-width: $bp-xl) {
+  .container {
+    max-width: 1400px;
+  }
+
+  .show-meta h2 {
+    font-size: 1.8rem;
+  }
+}

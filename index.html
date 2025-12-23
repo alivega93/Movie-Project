@@ -1,62 +1,395 @@
 <!DOCTYPE html>
 <html lang="es">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Catálogo Prime Video | TVMaze</title>
-  <link rel="stylesheet" href="css/styles.css" />
-</head>
-<body>
-  <!-- HEADER -->
-  <header class="site-header">
-    <div class="container nav-container">
-      <h1 class="logo">Prime Video</h1>
-      <nav>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Movie Prime</title>
+    <link rel="stylesheet" href="css/styles.css" />
+    <script type="module" src="./js/main.js"></script>
+    <script src="./js/script.js" defer></script>
+  </head>
+
+  <body>
+    <header class="site-header">
+      <h1 class="logo">Movie Prime</h1>
+      <div class="nav-container">
         <ul class="nav">
-          <li><a href="#" id="nav-home">Inicio</a></li>
-          <li><a href="#" id="nav-movies">Películas</a></li>
-          <li><a href="#" id="nav-series">Series TV</a></li>
-          <li><a href="#" id="nav-sports">Deportes</a></li>
-          <li><a href="#" id="nav-live">TV en directo</a></li>
-          <li><a href="#" id="nav-search" title="Buscar">🔍</a></li>
-          <li><a href="#" class="btn">Suscribirse</a></li>
+          <li><a href="#" data-section="hero" class="active">Inicio</a></li>
+          <li><a href="#" data-section="movies">Películas</a></li>
+          <li><a href="#" data-section="series">Series de TV</a></li>
+          <li><a href="#" data-section="deportes">Deportes</a></li>
+          <li><a href="#" data-section="tv">TV en directo</a></li>
+          <li class="suscripciones">
+            <a href="#">Suscripciones</a>
+            <ul class="submenu">
+              <li><a href="#">Prime Video</a></li>
+              <li><a href="#">Netflix</a></li>
+              <li><a href="#">Disney+</a></li>
+              <li><a href="#">Apple TV+</a></li>
+              <li><a href="#">HBO</a></li>
+              <li><a href="#">Max</a></li>
+              <li><a href="#">Paramount+</a></li>
+            </ul>
+          </li>
+          <li class="idiomas">
+            <a href="#">Idiomas</a>
+            <ul class="submenu">
+              <li><a href="#">Inglés</a></li>
+              <li><a href="#">Español</a></li>
+              <li><a href="#">Francés</a></li>
+              <li><a href="#">Alemán</a></li>
+              <li><a href="#">Portugués</a></li>
+              <li><a href="#">Italiano</a></li>
+            </ul>
+          </li>
+          <li class="generos">
+            <a href="#">Géneros</a>
+            <div class="submenu submenu-grid">
+              <div class="submenu-column">
+                <h4>Películas</h4>
+                <ul>
+                  <li><a href="#">Acción</a></li>
+                  <li><a href="#">Comedia</a></li>
+                  <li><a href="#">Drama</a></li>
+                  <li><a href="#">Terror</a></li>
+                  <li><a href="#">Romance</a></li>
+                </ul>
+              </div>
+              <div class="submenu-column">
+                <h4>Series</h4>
+                <ul>
+                  <li><a href="#">Acción</a></li>
+                  <li><a href="#">Comedia</a></li>
+                  <li><a href="#">Drama</a></li>
+                  <li><a href="#">Documental</a></li>
+                  <li><a href="#">Ciencia ficción</a></li>
+                </ul>
+              </div>
+            </div>
+          </li>
+          <li class="cuenta">
+            <a href="#">Tu cuenta</a>
+            <ul class="submenu cuenta-menu">
+              <li class="guest-only"><a href="#">Identificarse</a></li>
+              <li class="auth-only"><a href="#">Cerrar sesión</a></li>
+              <li><a href="#">Ayuda</a></li>
+              <li><a href="#">Ver en cualquier parte</a></li>
+            </ul>
+          </li>
+          <li>
+            <button id="nav-search" aria-label="Buscar">🔍</button>
+          </li>
         </ul>
-      </nav>
-    </div>
-  </header>
-
-  <!-- MAIN -->
-  <main class="site-main">
-    <section class="carousel container">
-      <h2>Top 5 Películas</h2>
-      <div class="grid" id="top-movies"></div>
+        <a href="#" class="btn-subscribe">Suscribirse a Prime</a>
+      </div>
+    </header>
+    <section class="search-section" style="display: none">
+      <h2>Buscar títulos</h2>
+      <form id="search-form">
+        <input
+          type="text"
+          id="search-input"
+          placeholder="Escribe el título..."
+        />
+        <button type="submit">Buscar</button>
+      </form>
+      <div class="search-results" style="display: none">
+        <div class="carousel-wrapper">
+          <button class="carousel-btn prev" aria-label="Anterior">◀</button>
+          <div class="carousel"></div>
+          <button class="carousel-btn next" aria-label="Siguiente">▶</button>
+          <div class="carousel-indicators"></div>
+        </div>
+      </div>
     </section>
-
-    <section class="carousel container">
-      <h2>Top 15 Mejores Series</h2>
-      <div class="grid" id="top-series"></div>
-    </section>
-
-    <section class="recommendations container">
-      <h2>Recomendaciones del mes</h2>
-      <div class="grid" id="recommendations"></div>
-    </section>
-
-    <section class="search-section container" style="display:none;">
-      <h2>Resultados</h2>
-      <div id="status" class="status"></div>
-      <div id="results" class="grid"></div>
-    </section>
-  </main>
-
-  <!-- FOOTER -->
-  <footer class="site-footer">
-    <div class="container">
-      <p>Proyecto educativo usando la API pública de TVMaze.</p>
-    </div>
-  </footer>
-
-  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-  <script type="module" src="js/main.js"></script>
-</body>
+    <main class="site-main">
+      <section id="content-area" aria-label="Resultados dinámicos"></section>
+      <section class="hero">
+        <h2>Bienvenido a Movie Prime</h2>
+        <p>
+          Explora películas, series y deportes en directo con la experiencia
+          Prime.
+        </p>
+      </section>
+      <section class="movies-section">
+        <h2>Películas</h2>
+        <div class="carousel-wrapper">
+          <button class="carousel-btn prev" aria-label="Anterior">◀</button>
+          <div class="carousel autoplay">
+            <div class="card">
+              <a href="pelicula1.html"
+                ><img src="assets/img/HARRY.jpg" alt="Harry Potter" />
+                <h3>Harry Potter</h3>
+              </a>
+            </div>
+            <div class="card">
+              <a href="pelicula2.html"
+                ><img src="assets/img/AVATAR.webp" alt="Avatar" />
+                <h3>Avatar</h3>
+              </a>
+            </div>
+            <div class="card">
+              <a href="pelicula3.html"
+                ><img src="assets/img/INCEPTION.avif" alt="Inception" />
+                <h3>Inception</h3>
+              </a>
+            </div>
+            <div class="card">
+              <a href="pelicula4.html"
+                ><img src="assets/img/CODE.webp" alt="The Da Vinci Code" />
+                <h3>The Da Vinci Code</h3>
+              </a>
+            </div>
+            <div class="card">
+              <a href="pelicula5.html"
+                ><img src="assets/img/INVISIBLE.webp" alt="The Invisible Man" />
+                <h3>The Invisible Man</h3>
+              </a>
+            </div>
+            <div class="card">
+              <a href="pelicula6.html"
+                ><img src="assets/img/ANABELLE.webp" alt="Annabelle Creation" />
+                <h3>Annabelle Creation</h3>
+              </a>
+            </div>
+            <div class="card">
+              <a href="pelicula7.html"
+                ><img src="assets/img/BURLESQUE.jpg" alt="Burlesque" />
+                <h3>Burlesque</h3>
+              </a>
+            </div>
+            <div class="card">
+              <a href="pelicula8.html"
+                ><img
+                  src="assets/img/TOALL.jpg"
+                  alt="To All The Boys I've Loved Before"
+                />
+                <h3>To All The Boys I've Loved Before</h3>
+              </a>
+            </div>
+            <div class="card">
+              <a href="pelicula9.html"
+                ><img src="assets/img/ANYONE.webp" alt="Anyone But You" />
+                <h3>Anyone But You</h3>
+              </a>
+            </div>
+            <div class="card">
+              <a href="pelicula10.html"
+                ><img src="assets/img/SAFE.avif" alt="Safe Haven" />
+                <h3>Safe Haven</h3>
+              </a>
+            </div>
+            <div class="card">
+              <a href="pelicula11.html"
+                ><img src="assets/img/TARA.jpg" alt="A Bridge To Terabithia" />
+                <h3>A Bridge To Terabithia</h3>
+              </a>
+            </div>
+            <div class="card">
+              <a href="pelicula12.html"
+                ><img src="assets/img/PARENT.jpg" alt="The Parent Trap" />
+                <h3>The Parent Trap</h3>
+              </a>
+            </div>
+            <div class="card">
+              <a href="pelicula13.html"
+                ><img
+                  src="assets/img/DRAGON.webp"
+                  alt="How To Train Your Dragon"
+                />
+                <h3>How To Train Your Dragon</h3>
+              </a>
+            </div>
+            <div class="card">
+              <a href="pelicula14.html"
+                ><img
+                  src="assets/img/DESPICABLE.webp"
+                  alt="Despicable Me Collection"
+                />
+                <h3>Despicable Me Collection</h3>
+              </a>
+            </div>
+            <div class="card" data-tmdb-id="11544" data-tmdb-type="movie">
+              <a href="pelicula15.html">
+                <img src="assets/img/LILO.jpg" alt="Lilo & Stitch" />
+                <h3>Lilo & Stitch</h3>
+              </a>
+            </div>
+          </div>
+          <button class="carousel-btn next" aria-label="Siguiente">▶</button>
+          <div class="carousel-indicators"></div>
+        </div>
+      </section>
+      <section class="series-section">
+        <h2>Series</h2>
+        <div class="carousel-wrapper">
+          <button class="carousel-btn prev" aria-label="Anterior">‹</button>
+          <div class="carousel autoplay">
+            <div class="card">
+              <a href="serie1.html"
+                ><img src="assets/img/sweet-tooth.avif" alt="Sweet Tooth" />
+                <h3>Sweet Tooth</h3>
+              </a>
+            </div>
+            <div class="card">
+              <a href="serie2.html"
+                ><img
+                  src="assets/img/quienmato.webp"
+                  alt="¿Quién Mató A Sara?"
+                />
+                <h3>¿Quién Mató A Sara?</h3>
+              </a>
+            </div>
+            <div class="card">
+              <a href="serie3.html"
+                ><img src="assets/img/911.jpg" alt="911 Lone Star" />
+                <h3>911 Lone Star</h3>
+              </a>
+            </div>
+            <div class="card">
+              <a href="serie4.html"
+                ><img src="assets/img/the_diplomat.jpg" alt="The Diplomat" />
+                <h3>The Diplomat</h3>
+              </a>
+            </div>
+            <div class="card">
+              <a href="serie5.html"
+                ><img src="assets/img/lincoln.webp" alt="The Lincoln Lawyer" />
+                <h3>The Lincoln Lawyer</h3>
+              </a>
+            </div>
+            <div class="card">
+              <a href="serie6.html"
+                ><img src="assets/img/jag.jpg" alt="JAG" />
+                <h3>JAG</h3>
+              </a>
+            </div>
+            <div class="card">
+              <a href="serie7.html"
+                ><img src="assets/img/ghost.webp" alt="Ghost Whisperer" />
+                <h3>Ghost Whisperer</h3>
+              </a>
+            </div>
+            <div class="card">
+              <a href="serie8.html"
+                ><img src="assets/img/charmed.jpg" alt="Charmed" />
+                <h3>Charmed</h3>
+              </a>
+            </div>
+            <div class="card">
+              <a href="serie9.html"
+                ><img src="assets/img/shadow.jpg" alt="Shadowhunters" />
+                <h3>Shadowhunters</h3>
+              </a>
+            </div>
+            <div class="card">
+              <a href="serie10.html"
+                ><img src="assets/img/fate.avif" alt="Fate The Winx Saga" />
+                <h3>Fate The Winx Saga</h3>
+              </a>
+            </div>
+            <div class="card">
+              <a href="serie11.html"
+                ><img src="assets/img/emily.webp" alt="Emily in Paris" />
+                <h3>Emily in Paris</h3>
+              </a>
+            </div>
+            <div class="card">
+              <a href="serie12.html"
+                ><img src="assets/img/virgin.avif" alt="Virgin River" />
+                <h3>Virgin River</h3>
+              </a>
+            </div>
+            <div class="card">
+              <a href="serie13.html"
+                ><img src="assets/img/good.jpg" alt="The Good Witch" />
+                <h3>The Good Witch</h3>
+              </a>
+            </div>
+            <div class="card">
+              <a href="serie14.html"
+                ><img
+                  src="assets/img/lavida.jpg"
+                  alt="Life In Color With David Attenborough"
+                />
+                <h3>Life In Color With David Attenborough</h3>
+              </a>
+            </div>
+            <div class="card">
+              <a href="serie15.html"
+                ><img
+                  src="assets/img/haunting.jpg"
+                  alt="The Haunting Of Hill House"
+                />
+                <h3>The Haunting Of Hill House</h3>
+              </a>
+            </div>
+          </div>
+          <button class="carousel-btn next" aria-label="Siguiente">›</button>
+          <div class="carousel-indicators"></div>
+        </div>
+      </section>
+      <section class="recommendations-section">
+        <h2>Recomendaciones</h2>
+        <div class="carousel-wrapper">
+          <button class="carousel-btn prev" aria-label="Anterior">‹</button>
+          <div class="carousel autoplay">
+            <div class="card">
+              <a href="recomendacion1.html"
+                ><img src="assets/img/WONKA-POSTER-02.jpg" alt="Wonka" />
+                <h3>Wonka</h3>
+              </a>
+            </div>
+            <div class="card" data-tmdb-id="693134" data-tmdb-type="movie">
+              <a href="recomendacion2.html">
+                <img src="assets/img/dune.avif" alt="Dune 2" />
+                <h3>Dune 2</h3>
+              </a>
+            </div>
+            <div class="card">
+              <a href="recomendacion3.html"
+                ><img src="assets/img/oppen.jpg" alt="Oppenheimer" />
+                <h3>Oppenheimer</h3>
+              </a>
+            </div>
+            <div class="card">
+              <a href="recomendacion4.html"
+                ><img src="assets/img/holiday.jpg" alt="Holiday" />
+                <h3>The Holiday</h3>
+              </a>
+            </div>
+            <div class="card">
+              <a href="recomendacion5.html"
+                ><img src="assets/img/klaus.jpg" alt="Klaus" />
+                <h3>Klaus</h3>
+              </a>
+            </div>
+          </div>
+          <button class="carousel-btn next" aria-label="Siguiente">›</button>
+          <div class="carousel-indicators"></div>
+        </div>
+      </section>
+      <section class="sports-section" style="display: none">
+        <h2>Deportes</h2>
+        <div class="carousel-wrapper">
+          <button class="carousel-btn prev" aria-label="Anterior">‹</button>
+          <div class="carousel"></div>
+          <button class="carousel-btn next" aria-label="Siguiente">›</button>
+          <div class="carousel-indicators"></div>
+        </div>
+      </section>
+      <section class="tv-section" style="display: none">
+        <h2>TV en vivo</h2>
+        <div class="carousel-wrapper">
+          <button class="carousel-btn prev" aria-label="Anterior">‹</button>
+          <div class="carousel"></div>
+          <button class="carousel-btn next" aria-label="Siguiente">›</button>
+          <div class="carousel-indicators"></div>
+        </div>
+      </section>
+    </main>
+    <footer class="site-footer">
+      <p>© 2025 MoviProject - Datos de TMDb</p>
+    </footer>
+  </body>
 </html>
